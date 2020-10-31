@@ -14,7 +14,7 @@ public class Main {
 			throw new RuntimeException(e);
 		}
 		
-		while (op != 15) {
+		while (op != 16) {
 
 			try {
 				op = UI.menu();
@@ -112,6 +112,11 @@ public class Main {
 					}
 	
 					case 15 -> {
+						graph.coloringHeuristic();
+						UI.print("Heurística da coloração do grafo executada com sucesso!");
+					}
+					
+					case 16 -> {
 						UI.println("Saindo da aplicação...");
 						Thread.sleep(2 * 1000);
 					}
@@ -121,6 +126,7 @@ public class Main {
 
 			} catch (Exception e) {
 				UI.printf("\nTipo: %s\nErro: %s\n", e.getClass().getName(), e.getMessage());
+				e.printStackTrace();
 			}
 		}
 

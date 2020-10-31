@@ -20,7 +20,8 @@ public class UI {
         System.out.println("12 - Alterar peso aresta");
         System.out.println("13 - Carregar grafo");
         System.out.println("14 - Salvar grafo");
-        System.out.println("15 - Sair");
+        System.out.println("15 - Heurística da Coloração");
+        System.out.println("16 - Sair");
         System.out.print("\nOpção: ");
 
         return Integer.parseInt(keyboard.nextLine());

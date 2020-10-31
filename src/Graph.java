@@ -9,7 +9,11 @@ public class Graph {
 
 	private int[][] graph;
 	private String[] vertex;
+	private int[] colors;
+	
 	private int size;
+	private boolean needCalculateColors = true;
+	private int amountColors;
 
 	public Graph() throws MaximumVextexException, IOException {
 		load();
@@ -33,6 +37,7 @@ public class Graph {
 		}
 
 		setValueAtPosition(initialVertex, finalVertex, value);
+		needCalculateColors = true;
 	}
 
 	public void removeEdge(String nameInitialVertex, String nameFinalVertex)
@@ -54,6 +59,7 @@ public class Graph {
 		}
 
 		setValueAtPosition(initialVertex, finalVertex, 0);
+		needCalculateColors = true;
 	}
 
 	public void changeEdgeWeigth(String nameInitialVertex, String nameFinalVertex, int value)
@@ -73,8 +79,8 @@ public class Graph {
 			throw new EdgeException(String.format("Os vértices \"%s\" e \"%s\" não são adjacentes.",
 					vertex[initialVertex], vertex[finalVertex]));
 		}
-		
-		if(value == 0) {
+
+		if (value == 0) {
 			throw new EdgeException("O peso da aresta não pode ser 0.");
 		}
 
@@ -115,44 +121,45 @@ public class Graph {
 					"Não é possível inserir mais um vértice, tamanho máximo atingido: " + MAX_SIZE);
 		}
 		vertex[size++] = name;
+		needCalculateColors = true;
 	}
 
 	public void removeVertex(String name) throws NotFoundVextexException {
 
-		
 		int index = getIndexVertex(name);
-		
+
 		if (index == -1) {
 			throw new NotFoundVextexException("O vértice " + name + " não foi encontrado no grafo.");
 		}
 
 		size--;
 		int j = index;
-		
+
 		for (int i = index; i < size; i++) {
 			vertex[i] = vertex[++j];
 		}
 
 		vertex[j] = null;
-		
-		if(index != size) {
+
+		if (index != size) {
 			for (int i = 0; i <= size; i++) {
-				for(j = index; j < size; j++) {
-					setValueJustAtPosition(i, j, graph[i][j+1]);
+				for (j = index; j < size; j++) {
+					setValueJustAtPosition(i, j, graph[i][j + 1]);
 				}
 			}
-			
+
 			for (int i = index; i < size; i++) {
-				for(j = 0; j <= size; j++) {
-					setValueJustAtPosition(i, j, graph[i+1][j]);	
+				for (j = 0; j <= size; j++) {
+					setValueJustAtPosition(i, j, graph[i + 1][j]);
 				}
 			}
 		}
-		
+
 		for (int i = 0; i < MAX_SIZE; i++) {
 			setValueAtPosition(i, size, 0);
 		}
 		
+		needCalculateColors = true;
 	}
 
 	private int getIndexVertex(String name) {
@@ -184,16 +191,17 @@ public class Graph {
 	}
 
 	public void showGraph() throws NotFoundVextexException {
-		
-		if(size == 0) {
+
+		if (size == 0) {
 			throw new NotFoundVextexException("O Grafo não possui nenhum vértice para ser exibido.");
 		}
-		
+
 		int i, j;
 		boolean first;
 
 		for (i = 0; i < size; i++) {
-			UI.printf("Vértices adjacentes a \"%s\": ", vertex[i]);
+			UI.printf("Vértices adjacentes a \"%s\"%s: ", vertex[i], 
+					!needCalculateColors ? String.format(" (Cor %d)", colors[i]) : "");
 			first = true;
 
 			for (j = 0; j < size; j++) {
@@ -204,6 +212,14 @@ public class Graph {
 			}
 
 			UI.printNewLine();
+		}
+		
+		UI.printNewLine();
+		
+		if(needCalculateColors) {
+			UI.print("Para exibir as cores de cada vértice, por favor, escolha a opção 15 primeiro.");
+		} else {
+			UI.printf("Este grafo é %d-Colorível através da heurística da coloração.", amountColors);
 		}
 	}
 
@@ -220,6 +236,7 @@ public class Graph {
 
 		graph = new int[MAX_SIZE][MAX_SIZE];
 		vertex = new String[MAX_SIZE];
+		colors = new int[MAX_SIZE];
 
 		for (int i = 1; i <= size; i++) {
 			vertex[i - 1] = lines.get(i);
@@ -236,6 +253,8 @@ public class Graph {
 			graph[j][k] = value;
 			graph[k][j] = value;
 		}
+		
+		needCalculateColors = true;
 	}
 
 	public void save() throws IOException {
@@ -276,7 +295,7 @@ public class Graph {
 				}
 			}
 		}
-		
+
 		return edges /= 2;
 	}
 
@@ -284,25 +303,25 @@ public class Graph {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if(i == j) {
+				if (i == j) {
 					continue;
 				}
-				
+
 				if (!edgeExists(i, j)) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
 
 	public boolean isEulerian() {
-		
-		if(isNull()) {
+
+		if (isNull()) {
 			return false;
 		}
-		
+
 		int degree;
 
 		for (int i = 0; i < size; i++) {
@@ -327,10 +346,10 @@ public class Graph {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if(i == j) {
+				if (i == j) {
 					continue;
 				}
-				
+
 				if (edgeExists(i, j)) {
 					return false;
 				}
@@ -344,10 +363,10 @@ public class Graph {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if(i == j) {
+				if (i == j) {
 					continue;
 				}
-				
+
 				if (edgeExists(i, j)) {
 					setValueJustAtPosition(i, j, 0);
 				} else {
@@ -355,5 +374,45 @@ public class Graph {
 				}
 			}
 		}
+		
+		needCalculateColors = true;
+	}
+
+	public void coloringHeuristic() {
+
+		int[] forbbidenColors = new int[size];
+		int r;
+		amountColors = 0;
+
+		for (int i = 0; i < size; i++) {
+			forbbidenColors[i] = -1;
+			colors[i] = 0;
+		}
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (edgeExists(i, j)) {
+					if (colors[j] != 0) {
+						forbbidenColors[colors[j] - 1] = i;
+					}
+				}
+			}
+
+			r = 1;
+
+			while (colors[i] == 0) {
+				if (forbbidenColors[r - 1] != i) {
+					colors[i] = r;
+					
+					if(r > amountColors) {
+						amountColors = r;
+					}
+				} else {
+					r++;
+				}
+			}
+		}
+		
+		needCalculateColors = false;
 	}
 }
