@@ -10,7 +10,7 @@ public class Graph {
 	private int[][] graph;
 	private String[] vertex;
 	private int[] colors;
-	
+
 	private int size;
 	private boolean needCalculateColors = true;
 	private int amountColors;
@@ -158,7 +158,7 @@ public class Graph {
 		for (int i = 0; i < MAX_SIZE; i++) {
 			setValueAtPosition(i, size, 0);
 		}
-		
+
 		needCalculateColors = true;
 	}
 
@@ -200,7 +200,7 @@ public class Graph {
 		boolean first;
 
 		for (i = 0; i < size; i++) {
-			UI.printf("Vértices adjacentes a \"%s\"%s: ", vertex[i], 
+			UI.printf("Vértices adjacentes a \"%s\"%s: ", vertex[i],
 					!needCalculateColors ? String.format(" (Cor %d)", colors[i]) : "");
 			first = true;
 
@@ -213,10 +213,10 @@ public class Graph {
 
 			UI.printNewLine();
 		}
-		
+
 		UI.printNewLine();
-		
-		if(needCalculateColors) {
+
+		if (needCalculateColors) {
 			UI.print("Para exibir as cores de cada vértice, por favor, escolha a opção 15 primeiro.");
 		} else {
 			UI.printf("Este grafo é %d-Colorível através da heurística da coloração.", amountColors);
@@ -253,7 +253,7 @@ public class Graph {
 			graph[j][k] = value;
 			graph[k][j] = value;
 		}
-		
+
 		needCalculateColors = true;
 	}
 
@@ -359,23 +359,33 @@ public class Graph {
 		return true;
 	}
 
-	public void changeComplement() {
+	public void showComplement() throws NotFoundVextexException {
 
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
+		if (size == 0) {
+			throw new NotFoundVextexException("O Grafo não possui nenhum vértice para ser exibido.");
+		}
+
+		int i, j;
+		boolean first;
+
+		for (i = 0; i < size; i++) {
+			UI.printf("Vértices adjacentes a \"%s\": ", vertex[i]);
+			first = true;
+
+			for (j = 0; j < size; j++) {
+
 				if (i == j) {
 					continue;
 				}
 
-				if (edgeExists(i, j)) {
-					setValueJustAtPosition(i, j, 0);
-				} else {
-					setValueJustAtPosition(i, j, 1);
+				if (!edgeExists(i, j)) {
+					UI.printf("%s \"%s\" (peso: %d)", first ? "" : ",", vertex[j], 1);
+					first = false;
 				}
 			}
+
+			UI.printNewLine();
 		}
-		
-		needCalculateColors = true;
 	}
 
 	public void coloringHeuristic() {
@@ -403,8 +413,8 @@ public class Graph {
 			while (colors[i] == 0) {
 				if (forbbidenColors[r - 1] != i) {
 					colors[i] = r;
-					
-					if(r > amountColors) {
+
+					if (r > amountColors) {
 						amountColors = r;
 					}
 				} else {
@@ -412,7 +422,7 @@ public class Graph {
 				}
 			}
 		}
-		
+
 		needCalculateColors = false;
 	}
 }

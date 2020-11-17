@@ -88,8 +88,8 @@ public class Main {
 					}
 	
 					case 11 -> {
-						graph.changeComplement();
-						UI.print("Grafo complementar gerado com sucesso!");
+						graph.showComplement();
+						UI.print("Grafo complementar exibido com sucesso!");
 					}
 	
 					case 12 -> {

@@ -16,7 +16,7 @@ public class UI {
         System.out.println("8 - Verificar euleriano");
         System.out.println("9 - Verificar completo");
         System.out.println("10 - Verificar totalmente desconexo");
-        System.out.println("11 - Grafo complementar");
+        System.out.println("11 - Exibir Grafo complementar");
         System.out.println("12 - Alterar peso aresta");
         System.out.println("13 - Carregar grafo");
         System.out.println("14 - Salvar grafo");
